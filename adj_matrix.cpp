@@ -1,5 +1,8 @@
 #include "adj_matrix.h"
 
+
+//default constructor for the adj matrix class
+//Creates a 2x2 matrix filled with zeros
 adj_matrix::adj_matrix()
 {
 	SIZE_OF_ADJ_ARRAY = 2; 
@@ -21,15 +24,20 @@ adj_matrix::adj_matrix()
 
 }
 
+//creates a nxn matrix based off use defined argument
+//the array will be initialized with all zeros 
 adj_matrix::adj_matrix(const int dimension)
 {
+	//Can't have matrix that it less than 2x2
 	if (dimension < 2) {
 		std::cerr << "ERROR: Cannot make graph with less than two verticies! You entered: " << dimension;
 		abort();
 	}
 	
+	//set size
 	SIZE_OF_ADJ_ARRAY = dimension;
 
+	//Do some dynamic allocation 
 	adj_array = new type*[SIZE_OF_ADJ_ARRAY];
 
 	for (int i = 0; i < SIZE_OF_ADJ_ARRAY; i++) { adj_array[i] = new type[SIZE_OF_ADJ_ARRAY]; }
@@ -40,6 +48,7 @@ adj_matrix::adj_matrix(const int dimension)
 		}
 	}
 
+	
 	SIZE_OF_COMP_ARRAY = max_entries();
 
 	adj_compressed = new type[SIZE_OF_COMP_ARRAY];
@@ -47,8 +56,10 @@ adj_matrix::adj_matrix(const int dimension)
 		adj_compressed[i] = 0;
 }
 
+//one line implementation of the ceiling function
 int adj_matrix::ceilingFunction(double passIn) { if (passIn > int(passIn)) { return (int(passIn) + 1); } else { return int(passIn); } }
 
+//Deconstructor to free memory
 adj_matrix::~adj_matrix()
 {
 	for (int i = 0; i < SIZE_OF_ADJ_ARRAY; i++) 
@@ -59,9 +70,10 @@ adj_matrix::~adj_matrix()
 	if (adj_compressed != NULL) {
 		delete [] adj_compressed;
 	}
-	//dummy code
 }
 
+//function to get the max amount of space to allocate in the 1d compressed array
+//Take the size of the adjacency matrix (n), and 
 unsigned int adj_matrix::max_entries(bool exclude_sym_line)
 {
 	int n = SIZE_OF_ADJ_ARRAY;
@@ -72,7 +84,7 @@ unsigned int adj_matrix::max_entries(bool exclude_sym_line)
 	return n;
 }
 
-
+//Prints the currently stored adjacency matrix
 void adj_matrix::print_adj_matrix(int width)
 {
 	std::cout << "Currently stored adjacency matrix:\n--------------------------------------------------------\n";
@@ -85,6 +97,7 @@ void adj_matrix::print_adj_matrix(int width)
 	std::cout << "--------------------------------------------------------\n"; 
 }
 
+//Prints the currently stored compressed matrix
 void adj_matrix::print_comp_matrix(int width)
 {
 	std::cout << "Currently stored compressed matrix:\n--------------------------------------------------------\n";
@@ -94,7 +107,7 @@ void adj_matrix::print_comp_matrix(int width)
 	std::cout << "\n--------------------------------------------------------\n";
 }
 
-
+//Set a value in the 2d matrix 
 void adj_matrix::set_value_2d(type value, unsigned int row, unsigned int column)
 {
 	row -= 1;
@@ -108,6 +121,7 @@ void adj_matrix::set_value_2d(type value, unsigned int row, unsigned int column)
 	
 }
 
+//Set a value in the compressed matrix
 void adj_matrix::set_value_compressed(type value, unsigned int index)
 {
 	if (index >= SIZE_OF_COMP_ARRAY) {
@@ -118,10 +132,13 @@ void adj_matrix::set_value_compressed(type value, unsigned int index)
 	adj_compressed[index] = value;
 }
 
+//blocks user from entering parameters into the compress function
 void adj_matrix::generate_adj_compressed_from_2d() { compress(); }
 
+//blocks user from entering parameters into the decompress function
 void adj_matrix::decompress_adj() { decompress(); }
 
+//Compression algorithm
 void adj_matrix::compress(int offset, int runNum)
 {
 	if (offset != SIZE_OF_ADJ_ARRAY - 1) {
@@ -136,6 +153,8 @@ void adj_matrix::compress(int offset, int runNum)
 	}
 }
 
+
+//Decompression algorithm
 void adj_matrix::decompress(int offset, int runNum)
 {
 	if (offset != SIZE_OF_ADJ_ARRAY - 1) {
